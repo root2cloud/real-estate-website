@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_property_property,access_property_property,model_property_property,,1,1,1,1
+access_property_category,access_property_category,model_property_category,,1,1,1,1
+access_property_registration_user,property.registration user,model_property_registration,base.group_user,1,1,1,1

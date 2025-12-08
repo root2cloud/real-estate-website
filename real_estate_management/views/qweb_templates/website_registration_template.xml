@@ -1,0 +1,258 @@
+<odoo>
+    <template id="property_registration_form" name="Property Registration Form - Premium Edition">
+        <t t-call="website.layout">
+            <main class="container-fluid luxury-bg py-5">
+
+                <!-- HEADER -->
+                <section class="text-center text-white py-5"
+                         style="background: linear-gradient(100deg,#5b21b6 0%, #4f46e5 40%, #14b8a6 100%);
+                                border-bottom-left-radius:3rem;border-bottom-right-radius:3rem;">
+                    <h2 class="mb-1 fw-bold display-5 tracking-wider">✨ Premium Property Registration</h2>
+                    <p class="mb-0 fs-5 text-light opacity-90 fw-500">
+                        Showcase your property with style and confidence.
+                    </p>
+                </section>
+
+                <!-- FORM SECTION -->
+                <section class="container my-5">
+                    <div class="card property-form-card border-0 mx-auto shadow-xxl bg-glass"
+                         style="max-width:1220px;min-height:760px;">
+                        <div class="card-body p-5">
+
+                            <form action="/property/submit" method="post" enctype="multipart/form-data"
+                                  id="propertyForm" autocomplete="off">
+                                <div class="row g-4">
+
+                                    <!-- Customer -->
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">
+                                            <i class="fa fa-user text-primary me-1"></i>Customer Name*
+                                        </label>
+                                        <input type="text" name="customer_name" class="modern-input form-control"
+                                               placeholder="Full Name" required="required"/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">
+                                            <i class="fa fa-user text-primary me-1"></i>Property Name*
+                                        </label>
+                                        <input type="text" name="property_name" class="modern-input form-control"
+                                               placeholder="Full Property Name" required="required"/>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">
+                                            <i class="fa fa-phone text-success me-1"></i>Phone Number*
+                                        </label>
+                                        <input type="text" name="phone_number" class="modern-input form-control"
+                                               placeholder="Mobile number" required="required"/>
+                                    </div>
+
+                                    <!-- Location -->
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">
+                                            <i class="fa fa-map-marker text-danger me-1"></i>Place*
+                                        </label>
+                                        <input type="text" name="place" class="modern-input form-control"
+                                               placeholder="e.g., Jubilee Hills" required="required"/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">
+                                            <i class="fa fa-cubes text-purple me-1"></i>Category*
+                                        </label>
+                                        <select name="category" class="form-select modern-input" required="required">
+                                            <option value="">Select Category</option>
+                                            <option value="residential">Residential</option>
+                                            <option value="commercial">Commercial</option>
+                                            <option value="agricultural">Agricultural</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Area & Price -->
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">
+                                            <i class="fa fa-arrows-alt text-dark me-1"></i>Square Yards*
+                                        </label>
+                                        <input type="number" name="sq_yards" class="modern-input form-control"
+                                               placeholder="Built-up area" min="0" required="required"/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">
+                                            <i class="fa fa-inr text-warning me-1"></i>Expected Price (₹)*
+                                        </label>
+                                        <input type="number" name="price" class="modern-input form-control"
+                                               placeholder="e.g., 17500000" min="0" required="required"/>
+                                    </div>
+
+                                    <!-- Address -->
+                                    <div class="col-md-12">
+                                        <label class="form-label fw-semibold">
+                                            <i class="fa fa-building text-info me-1"></i>Exact Location*
+                                        </label>
+                                        <input type="text" name="location" class="modern-input form-control"
+                                               placeholder="Full address" required="required"/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">
+                                            <i class="fa fa-city text-primary me-1"></i>City*
+                                        </label>
+                                        <input type="text" name="city" class="modern-input form-control"
+                                               placeholder="e.g., Hyderabad" required="required"/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold">
+                                            <i class="fa fa-globe text-danger me-1"></i>State*
+                                        </label>
+                                        <input type="text" name="state" class="modern-input form-control"
+                                               placeholder="e.g., Telangana" required="required"/>
+                                    </div>
+
+                                    <!-- Upload -->
+                                    <div class="col-12">
+                                        <label class="form-label fw-semibold">
+                                            <i class="fa fa-image text-secondary me-1"></i>Upload Property Images*
+                                            <span class="text-muted">(First is cover)</span>
+                                        </label>
+                                        <input type="file" name="images" id="images" accept="image/*"
+                                               multiple="multiple" class="form-control modern-input" required="required"/>
+                                        <small class="text-muted d-block mt-1">
+                                            Upload multiple for best gallery. First will be the main image.
+                                        </small>
+                                        <div id="image-preview-list" class="d-flex flex-wrap gap-4 mt-4"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Submit -->
+                                <div class="text-center mt-5">
+                                    <button type="submit"
+                                            class="btn btn-lg px-5 py-2 submit-glass-btn fw-bold shadow-sm hover-glass-zoom">
+                                        <i class="fa fa-paper-plane me-2"></i>Submit Property
+                                    </button>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <!-- JS -->
+            <script t-ignore="true">
+                document.addEventListener("DOMContentLoaded", function() {
+                const input = document.getElementById("images");
+                const previewList = document.getElementById("image-preview-list");
+                input.addEventListener("change", function() {
+                previewList.innerHTML = "";
+                Array.from(input.files).forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                const div = document.createElement("div");
+                div.className = "preview-thumb text-center glass-preview";
+                div.innerHTML = `
+                <div class="preview-box glass-tile" style="border: 3px solid ${index === 0 ? '#7dd3fc' : '#d1d5db'}">
+                    <img src="${e.target.result}" alt="Preview ${index+1}" class="preview-img glass-img"/>
+                    <div class="preview-label badge ${index === 0 ? 'bg-primary' : 'bg-secondary'}">
+                        ${index === 0 ? 'Main Image' : 'Gallery'}
+                    </div>
+                </div>
+                `;
+                previewList.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+                });
+                });
+                });
+            </script>
+
+            <!-- STYLES -->
+            <style t-ignore="true">
+                .luxury-bg {
+                background: linear-gradient(145deg, #d6e0ff 0%, #e0f7fa 45%, #f3e8ff 100%);
+                min-height: 100vh;
+                }
+                .property-form-card {
+                background: rgba(255,255,255, 0.6);
+                backdrop-filter: blur(10px) saturate(130%);
+                border-radius: 28px;
+                box-shadow: 0 12px 45px rgba(44,82,130,0.12);
+                transition: transform .25s, box-shadow .3s;
+                }
+                .property-form-card:hover {
+                transform: scale(1.01);
+                box-shadow: 0 22px 65px rgba(50,75,140,0.25);
+                }
+                .bg-glass {
+                background: rgba(255,255,255, 0.93);
+                border-radius: 2rem;
+                }
+                .modern-input {
+                border: 1px solid #cfd6ff;
+                background: rgba(255,255,255,0.75);
+                border-radius: 10px;
+                padding: 10px 16px;
+                font-size: 1rem;
+                transition: border-color .3s, background .2s, box-shadow .2s;
+                }
+                .modern-input:focus {
+                border-color: #8b5cf6;
+                background: #f5f3ff;
+                box-shadow: 0 0 0 5px rgba(147,51,234,0.15);
+                }
+                .modern-input:hover {
+                border-color: #7dd3fc;
+                }
+                .submit-glass-btn {
+                background: linear-gradient(90deg,#4f46e5 0%, #7e22ce 50%, #14b8a6 100%);
+                color: white;
+                border: none;
+                border-radius: 2rem;
+                letter-spacing: 0.03em;
+                box-shadow: 0 8px 24px rgba(79,70,229,0.25);
+                transition: all 0.25s;
+                }
+                .submit-glass-btn:hover {
+                background: linear-gradient(90deg,#6366f1 0%, #9333ea 60%, #0ea5e9 100%);
+                transform: scale(1.045) translateY(-4px);
+                box-shadow: 0 12px 30px rgba(99,102,241,0.4);
+                }
+                .preview-thumb { margin-right:16px; margin-bottom:24px; }
+                .preview-box {
+                width: 140px; height: 140px; border-radius: 18px;
+                display: flex; align-items: center; justify-content: center;
+                overflow: hidden;
+                box-shadow: 0 5px 18px rgba(100,116,139,0.15);
+                }
+                .preview-img {
+                width: 100%; height: 100%; object-fit: cover;
+                border-radius: 18px;
+                }
+                .preview-label {
+                position: absolute; bottom: 6px; left: 50%;
+                transform: translateX(-50%);
+                font-size: 13px; padding: 4px 12px;
+                border-radius: 12px; font-weight: 600;
+                }
+                .tracking-wider { letter-spacing: .08em; }
+                @media (max-width: 768px) {
+                .property-form-card, .card-body { padding: 2rem 1.4rem !important; }
+                .display-5 { font-size: 2rem; }
+                }
+            </style>
+        </t>
+    </template>
+
+    <!-- SUCCESS TEMPLATE -->
+    <template id="property_submission_success" name="Property Submission Success">
+        <t t-call="website.layout">
+            <main class="container my-5 text-center">
+                <div class="card mx-auto shadow-lg p-5" style="max-width: 700px; border-radius: 2rem;">
+                    <div class="mb-3">
+                        <img src="/web/static/img/smile.svg" alt="success" width="80"/>
+                    </div>
+                    <h2 class="fw-bold text-success mb-3">Thank You!</h2>
+                    <p>Your property details have been successfully submitted. Our team will reach out to you soon!</p>
+                    <a href="/" class="btn btn-primary rounded-pill mt-3 px-4 py-2">Back to Home</a>
+                </div>
+            </main>
+        </t>
+    </template>
+</odoo>

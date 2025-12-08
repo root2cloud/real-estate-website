@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="property_map_template" name="Property Map Page">
+        <t t-call="website.layout">
+
+            <!-- HEAD SECTION -->
+            <t t-set="head">
+                <link rel="stylesheet" href="/real_estate_management/static/src/css/property_map.css"/>
+                <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+                <link rel="stylesheet"
+                      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+            </t>
+
+            <!-- PAGE TITLE SECTION -->
+            <!--            <t t-set="title">Explore Premium Properties</t>-->
+
+            <div id="wrap">
+                <main class="container-fluid">
+
+                    <!-- =========================
+                         TOP HEADER + FILTER + CATEGORIES
+                         ========================= -->
+                    <section id="top-bar" class="row">
+                        <!-- CENTER MAIN HEADING -->
+<!--                        <div class="col-12 text-center">-->
+<!--                            <h1 class="main-heading">-->
+<!--                                Explore Our Exclusive Property Showcase-->
+<!--                            </h1>-->
+<!--                        </div>-->
+
+                        <!-- LEFT / RIGHT LINE -->
+                        <div class="col-12 d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between top-bar-inner">
+                            <!-- LEFT: CITY FILTER + COUNT -->
+                            <div class="left-block">
+                                <!-- CITY FILTER -->
+                                <div class="city-filter-container">
+                                    <form method="get" action="/" id="cityFilterForm">
+                                        <label for="citySelect">
+                                            <i class="fas fa-map-marker-alt" style="color:#ea580c;"></i>
+                                            Select City:
+                                        </label>
+                                        <select name="city" id="citySelect" class="form-select"
+                                                onchange="this.form.submit()">
+                                            <option value="">All Cities</option>
+                                            <t t-foreach="city_list" t-as="city">
+                                                <option t-att-value="city"
+                                                        t-att-selected="'selected' if city==selected_city else None">
+                                                    <t t-esc="city"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </form>
+                                </div>
+
+                                <!-- PROPERTY COUNT -->
+                                <!--                                <div class="property-count-inline">-->
+                                <!--                                    🎯-->
+                                <!--                                    <span t-out="property_count"/>-->
+                                <!--                                    Exclusive Properties Available-->
+                                <!--                                </div>-->
+                                <div class="col-12 text-center">
+                                    <h1 class="main-heading">
+                                        Explore Our Exclusive Property Showcase
+                                    </h1>
+                                </div>
+                            </div>
+
+                            <!-- RIGHT: SUBTITLE + CATEGORIES -->
+                            <div class="right-block text-md-end text-start mt-3 mt-md-0">
+                                <h2 class="right-subtitle">
+                                    Premium Properties
+                                    <t t-if="selected_city">
+                                        in
+                                        <span class="city-name">
+                                            <t t-esc="selected_city"/>
+                                        </span>
+                                    </t>
+                                    <t t-else="">
+                                        in All Cities
+                                    </t>
+                                </h2>
+
+                                <!--                                <div class="category-pills">-->
+                                <!--                                    <button class="category-pill active">Residential</button>-->
+                                <!--                                    <button class="category-pill">Commercial</button>-->
+                                <!--                                    <button class="category-pill">Property</button>-->
+                                <!--                                    <button class="category-pill">Plots</button>-->
+                                <!--                                    <button class="category-pill">Agricultural Land</button>-->
+                                <!--                                </div>-->
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- =========================
+                         MAP DISPLAY
+                         ========================= -->
+                    <section id="map-display" class="row">
+                        <div class="col-12">
+                            <div id="category-legend" t-att-data-colors="category_colors"/>
+                            <div id="propertyMap"></div>
+                        </div>
+                    </section>
+
+                    <!-- =========================
+                         FEATURED PROPERTIES
+                         ========================= -->
+                    <t t-if="selected_city">
+                        <section id="featured-properties" class="featured-section">
+                            <div class="container-fluid">
+                                <div class="row justify-content-center">
+                                    <div class="col-12 col-lg-10">
+                                        <div class="section-header text-center mb-5">
+                                            <h2 class="section-title">
+                                                <span class="title-accent">✨</span>
+                                                Featured Properties
+                                                in
+                                                <span class="city-highlight">
+                                                    <t t-esc="selected_city"/>
+                                                </span>
+                                                <span class="title-accent">🏡</span>
+                                            </h2>
+                                            <p class="section-subtitle">
+                                                Discover our handpicked premium properties with exceptional value
+                                            </p>
+                                        </div>
+
+                                        <div class="row g-4">
+                                            <t t-foreach="featured_properties" t-as="fp">
+                                                <div class="col-12 col-md-6 col-lg-4">
+                                                    <div class="property-card h-100">
+                                                        <a t-att-href="'/property/%d' % fp.id" class="card-link">
+                                                            <!-- Image -->
+                                                            <div class="image-container">
+                                                                <img t-if="fp.image"
+                                                                     t-att-src="'data:image/png;base64,%s' % fp.image.decode('utf-8')"
+                                                                     t-att-alt="fp.name"
+                                                                     class="property-image"/>
+                                                                <div class="image-overlay d-flex align-items-center justify-content-center">
+                                                                    <div class="overlay-content">
+                                                                        <span class="view-details">View Details</span>
+                                                                        <i class="fas fa-arrow-right ms-2"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="price-badge">
+                                                                    ₹
+                                                                    <t t-esc="'{:,}'.format(int(fp.price or 0))"/>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Content -->
+                                                            <div class="card-content">
+                                                                <h3 class="property-name">
+                                                                    <t t-esc="fp.name"/>
+                                                                </h3>
+                                                                <div class="property-location d-flex align-items-center mb-3">
+                                                                    <i class="fas fa-map-marker-alt me-2"></i>
+                                                                    <span>
+                                                                        <t t-esc="fp.city"/>
+                                                                    </span>
+                                                                </div>
+                                                                <div class="property-features d-flex flex-wrap gap-2 mb-3">
+                                                                    <div class="feature d-flex align-items-center"
+                                                                         t-if="fp.plot_area">
+                                                                        <i class="fas fa-expand-arrows-alt me-1"></i>
+                                                                        <span>
+                                                                            <t t-esc="int(fp.plot_area)"/>
+                                                                            sq.ft
+                                                                        </span>
+                                                                    </div>
+                                                                    <div class="feature d-flex align-items-center"
+                                                                         t-if="fp.category_id">
+                                                                        <i class="fas fa-home me-1"></i>
+                                                                        <span>
+                                                                            <t t-esc="fp.category_id.name"/>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </t>
+
+                    <!-- =========================
+                         INVESTMENT OVERVIEW
+                         ========================= -->
+                    <section id="investment-overview" class="mt-3">
+                        <div class="container text-center">
+                            <t t-if="selected_city">
+                                <div class="mb-5">
+                                    <h2>
+                                        🌇 Why Should You Invest in
+                                        <span class="highlight-city">
+                                            <t t-esc="selected_city"/>
+                                        </span>
+                                        ?
+                                    </h2>
+                                    <p class="text-muted">
+                                        Discover expert insights backed by growth, connectivity, and trust.
+                                    </p>
+                                </div>
+
+                                <div class="row g-4">
+                                    <div class="col-md-6 col-lg-3">
+                                        <div class="info-box info-box-green">
+                                            <h5 class="fw-bold text-success mb-2">💼 Investment Reasons</h5>
+                                            <p class="text-dark" style="font-size:15px; line-height:1.6;">
+                                                <t t-raw="(city_investment_info or {}).get('ai_investment_reasons', '')"/>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-lg-3">
+                                        <div class="info-box info-box-blue">
+                                            <h5 class="fw-bold text-primary mb-2">🚀 Growth Potential</h5>
+                                            <p class="text-dark" style="font-size:15px; line-height:1.6;">
+                                                <t t-raw="(city_investment_info or {}).get('ai_growth_potential', '')"/>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-lg-3">
+                                        <div class="info-box info-box-yellow">
+                                            <h5 class="fw-bold text-warning mb-2">🏗️ Infrastructure</h5>
+                                            <p class="text-dark" style="font-size:15px; line-height:1.6;">
+                                                <t t-raw="(city_investment_info or {}).get('ai_infrastructure', '')"/>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-lg-3">
+                                        <div class="info-box info-box-red">
+                                            <h5 class="fw-bold text-danger mb-2">📊 Market Trends</h5>
+                                            <p class="text-dark" style="font-size:15px; line-height:1.6;">
+                                                <t t-raw="(city_investment_info or {}).get('ai_market_trends', '')"/>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <div class="p-5"
+                                     style="background:linear-gradient(135deg,#eef2ff,#f9fafb); border-radius:12px;">
+                                    <h3 class="fw-semibold text-secondary">
+                                        🏙️ Select a City to Discover Smart Investment Insights!
+                                    </h3>
+                                    <p class="text-muted">
+                                        Choose a city from the dropdown to see AI-generated real estate highlights.
+                                    </p>
+                                </div>
+                            </t>
+                        </div>
+                    </section>
+
+                </main>
+            </div>
+
+            <!-- HIDDEN DATA SECTION -->
+            <section id="hidden-data">
+                <div id="property-data" t-att-data-properties="properties_json"/>
+            </section>
+
+            <!-- SCRIPTS SECTION -->
+            <section id="scripts">
+                <script defer="defer" src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"/>
+                <script defer="defer" src="/real_estate_management/static/src/js/property_map.js"/>
+            </section>
+
+        </t>
+    </template>
+</odoo>

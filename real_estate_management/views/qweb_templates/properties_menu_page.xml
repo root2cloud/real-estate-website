@@ -1,0 +1,315 @@
+<odoo>
+    <template id="property_listing_template" name="Enhanced Compact Property Listing Page">
+        <main class="main-container">
+
+            <!-- 🏡 Hero Section -->
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h1>Find Your Dream Property</h1>
+                    <p>Discover premium homes, villas, and plots — curated just for you.</p>
+                    <a href="#properties" class="explore-btn">Explore Now</a>
+                </div>
+            </section>
+
+            <!-- 🔍 Search Section -->
+            <div class="search-section">
+                <form method="get" action="/properties" class="search-form">
+                    <input type="text" name="search" placeholder="Search by Name, Location, ZIP" t-att-value="search"/>
+                    <input type="text" name="city" placeholder="City" t-att-value="city"/>
+                    <input type="text" name="zip_code" placeholder="ZIP Code" t-att-value="zip_code"/>
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+
+            <!-- 🏘 Property Listing Section -->
+            <div id="properties" class="property-listing-container">
+                <t t-if="properties">
+                    <div class="property-list">
+                        <t t-foreach="properties" t-as="prop">
+                            <div class="property-card fade-in">
+
+                                <!-- Property Image -->
+                                <div class="property-image">
+                                    <img t-if="prop['image_url']" t-att-src="prop['image_url']" alt="Property Image"/>
+                                </div>
+
+                                <!-- Property Info -->
+                                <div class="property-info">
+                                    <h3 class="property-name" t-esc="prop['name']"/>
+                                    <p class="category">
+                                        <i class="fa fa-tags"></i>
+                                        <t t-esc="prop['category']"/>
+                                    </p>
+
+                                    <p class="price">₹
+                                        <t t-esc="prop['price']"/>
+                                    </p>
+                                    <p class="details">
+                                        <strong>Plot Area:</strong>
+                                        <t t-esc="prop['plot_area']"/>
+                                        sq.ft
+                                        <br/>
+                                        <strong>Price/Sq.Ft:</strong>
+                                        ₹
+                                        <t t-esc="prop['price_per_sqft']"/>
+                                    </p>
+
+                                    <p class="location">
+                                        <i class="fa fa-map-marker-alt"></i>
+                                        <t t-esc="prop['city']"/>
+                                        -
+                                        <t t-esc="prop['zip_code']"/>
+                                    </p>
+
+                                    <a t-att-href="'/property/' + str(prop['id'])" class="view-btn">View Details</a>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+                <t t-if="not properties or not len(properties)">
+                    <p class="no-results">No properties found matching your criteria.</p>
+                </t>
+            </div>
+        </main>
+
+        <!-- 💅 CSS -->
+        <style>
+            /* 🌸 Global Styles */
+            .main-container {
+            background: #f7f9fc;
+            font-family: 'Poppins', sans-serif;
+            padding: 0;
+            }
+
+            /* 🌆 Hero Section */
+            .hero-section {
+            background: linear-gradient(120deg, #6366f1, #ec4899);
+            color: white;
+            text-align: center;
+            padding: 3rem 1rem 4rem 1rem;
+            position: relative;
+            overflow: hidden;
+            }
+
+            .hero-section::before {
+            content: "";
+            position: absolute;
+            top: 0; left: -50%;
+            width: 200%; height: 100%;
+            background: url('https://cdn.pixabay.com/photo/2016/11/18/14/42/architecture-1836070_1280.jpg') center/cover
+            no-repeat;
+            opacity: 0.25;
+            transform: scale(1.1);
+            animation: moveBackground 20s linear infinite alternate;
+            }
+
+            @keyframes moveBackground {
+            0% { transform: translateX(0) scale(1.1); }
+            100% { transform: translateX(-10%) scale(1.15); }
+            }
+
+            .hero-content {
+            position: relative;
+            z-index: 2;
+            }
+
+            .hero-content h1 {
+            font-size: 2.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+            }
+
+            .hero-content p {
+            font-size: 1.05rem;
+            margin-bottom: 1.2rem;
+            color: #fef2f2;
+            }
+
+            .explore-btn {
+            background: white;
+            color: #6366f1;
+            padding: 0.6rem 1.4rem;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            }
+
+            .explore-btn:hover {
+            background: #1e293b;
+            color: #fff;
+            transform: scale(1.08);
+            }
+
+            /* 🔍 Search Section */
+            .search-section {
+            background: #fff;
+            margin: -1.8rem auto 1.5rem auto;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            max-width: 900px;
+            position: relative;
+            z-index: 3;
+            }
+
+            .search-form {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            }
+
+            .search-form input {
+            flex: 1 1 200px;
+            padding: 0.5rem 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            }
+
+            .search-form button {
+            background: linear-gradient(90deg, #6366f1, #ec4899);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.55rem 1.2rem;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.3s;
+            }
+
+            .search-form button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(99,102,241,0.4);
+            }
+
+            /* 🏠 Property Cards */
+            .property-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1.5rem 1rem;
+            }
+
+            .property-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
+            width: 230px; /* smaller cards for 4–5 per row */
+            transition: all 0.4s ease;
+            position: relative;
+            }
+
+            .property-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 8px 18px rgba(99,102,241,0.25);
+            border: 2px solid transparent;
+            background-image: linear-gradient(white, white),
+            linear-gradient(90deg, #6366f1, #ec4899);
+            background-origin: border-box;
+            background-clip: content-box, border-box;
+            }
+
+            .property-image {
+            height: 160px;
+            overflow: hidden;
+            }
+
+            .property-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease, filter 0.3s;
+            }
+
+            .property-card:hover .property-image img {
+            transform: scale(1.1);
+            filter: brightness(1.1);
+            }
+
+            .property-info {
+            padding: 0.8rem 1rem;
+            }
+
+            .property-name {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.3rem;
+            }
+
+            .category {
+            font-size: 0.85rem;
+            color: #6366f1;
+            margin-bottom: 0.3rem;
+            }
+
+            .price {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #ec4899;
+            margin-bottom: 0.3rem;
+            }
+
+            .details {
+            font-size: 0.85rem;
+            color: #475569;
+            margin-bottom: 0.3rem;
+            }
+
+            .location {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 0.6rem;
+            }
+
+            .view-btn {
+            display: inline-block;
+            background: linear-gradient(90deg, #ec4899, #6366f1);
+            color: white;
+            padding: 0.4rem 0.9rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            }
+
+            .view-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 3px 10px rgba(99,102,241,0.4);
+            }
+
+            /* ✨ Animation */
+            .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s forwards;
+            }
+
+            @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+            }
+
+            /* 📱 Responsive */
+            @media (max-width: 1200px) {
+            .property-card { width: 210px; }
+            }
+
+            @media (max-width: 992px) {
+            .property-card { width: 45%; }
+            }
+
+            @media (max-width: 600px) {
+            .property-card { width: 100%; }
+            .property-image { height: 180px; }
+            .hero-content h1 { font-size: 1.8rem; }
+            }
+        </style>
+    </template>
+</odoo>

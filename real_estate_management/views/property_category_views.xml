@@ -1,0 +1,40 @@
+<odoo>
+    <record id="view_property_category_list" model="ir.ui.view">
+        <field name="name">property.category.list</field>
+        <field name="model">property.category</field>
+        <field name="arch" type="xml">
+            <list string="Property Categories">
+                <field name="name"/>
+                <field name="description"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_property_category_form" model="ir.ui.view">
+        <field name="name">property.category.form</field>
+        <field name="model">property.category</field>
+        <field name="arch" type="xml">
+            <form string="Property Category">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                        <field name="image"/>
+                    </group>
+                    <group>
+                        <field name="seo_title"/>
+                        <field name="seo_description"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="real_estate_management.action_property_category" model="ir.actions.act_window">
+        <field name="name">Property Categories</field>
+        <field name="res_model">property.category</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

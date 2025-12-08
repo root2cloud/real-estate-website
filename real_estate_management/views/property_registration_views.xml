@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="view_property_registration_tree" model="ir.ui.view">
+        <field name="name">property.registration.tree</field>
+        <field name="model">property.registration</field>
+        <field name="arch" type="xml">
+            <list string="Property Registrations">
+                <field name="customer_name"/>
+                <field name="phone_number"/>
+                <field name="category"/>
+                <field name="city"/>
+                <field name="state"/>
+                <field name="status"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_property_registration_form" model="ir.ui.view">
+        <field name="name">property.registration.form</field>
+        <field name="model">property.registration</field>
+        <field name="arch" type="xml">
+            <form string="Property Registration" class="oe_form_padding">
+                <header>
+                    <button name="action_approve" string="Approve" type="object" class="btn btn-success">
+                        <!--                        <visible>status not in ('approved', 'rejected')</visible>-->
+                    </button>
+                    <button name="action_reject" string="Reject" type="object" class="btn btn-danger">
+                        <!--                        <visible>status not in ('approved', 'rejected')</visible>-->
+                    </button>
+                </header>
+
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="customer_name"/>
+                            <field name="property_name"/>
+                            <field name="phone_number"/>
+                            <field name="place"/>
+                            <field name="category"/>
+                            <field name="sq_yards"/>
+                            <field name="price"/>
+                            <field name="location"/>
+                            <field name="city"/>
+                            <field name="state"/>
+                            <field name="country_id"/>
+                            <field name="status" readonly="1"/>
+                            <field name="email"/>
+                        </group>
+
+                        <!-- Main Image -->
+                        <group>
+                            <!--                            <div class="oe_right oe_avatar">-->
+                            <!--                                <field name="image" widget="image" class="oe_avatar"/>-->
+                            <field name="image" nolabel="1" widget="image" style="width: 230px; height: auto;"/>
+                            <!--                            </div>-->
+                        </group>
+                    </group>
+
+                    <!--                    <separator string="Gallery Images"/>-->
+
+                    <!-- Responsive gallery for attachments -->
+                    <div class="oe_title" style="margin-top: 10px;">
+                        <field name="attachment_ids" widget="many2many_binary" options="{'preview_image': true}"/>
+                    </div>
+                </sheet>
+
+                <!-- Chatter for attachments & messages -->
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_property_registration" model="ir.actions.act_window">
+        <field name="name">Property Registrations</field>
+        <field name="res_model">property.registration</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('status', 'not in', ['approved'])]</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_property_registration"
+              name="Property Registrations"
+              parent="menu_real_estate_root"
+              action="action_property_registration"/>
+</odoo>

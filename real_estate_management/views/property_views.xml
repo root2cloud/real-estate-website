@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Tree (List) View -->
+    <record id="view_property_list" model="ir.ui.view">
+        <field name="name">property.property.list</field>
+        <field name="model">property.property</field>
+        <field name="arch" type="xml">
+            <list editable="top" open_form_view="True">
+                <field name="name"/>
+                <field name="price"/>
+                <field name="plot_area"/>
+                <field name="facing_direction"/>
+                <field name="title_status"/>
+                <field name="adhar_image" filename="adhar_filename"/>
+
+                <field name="city"/>
+                <field name="is_published"/>
+                <field name="is_featured"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+
+    <record id="view_property_form" model="ir.ui.view">
+        <field name="name">property.property.form</field>
+        <field name="model">property.property</field>
+        <field name="arch" type="xml">
+            <form string="Property">
+                <sheet>
+                    <!-- Top section with image and key fields -->
+                    <div class="oe_title">
+                        <div class="oe_edit_only">
+                            <label for="name" string="Property Name"/>
+                        </div>
+                        <h1>
+                            <field name="name" required="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="is_featured"/>
+                            <field name="category_id" options="{'no_create': True}"/>
+                            <field name="short_description"/>
+                            <field name="price"/>
+                            <field name="plot_area"/>
+                            <field name="price_per_sqft" readonly="1"/>
+                            <field name="currency_id" readonly="1"/>
+                            <field name="city_investment_reasons"/>
+                            <field name="city_growth_potential"/>
+
+                        </group>
+                        <group>
+                            <field name="image" nolabel="1" widget="image" style="width: 230px; height: auto;"/>
+                            <field name="city_infrastructure"/>
+                            <field name="city_market_trends"/>
+                            <field name="city_investment_generated"/>
+                            <field name="city_investment_date"/>
+                            <field name="last_city_processed"/>
+                        </group>
+                    </group>
+
+
+                    <!-- Notebook pages -->
+                    <notebook>
+                        <!-- Page 1: General Information -->
+                        <page string="General Information">
+                            <group>
+                                <group string="Details">
+
+                                    <field name="facing_direction"/>
+                                    <field name="road_width"/>
+                                    <field name="title_status"/>
+                                    <field name="adhar_image" filename="adhar_filename"/>
+                                    <field name="agreement_document" filename="agreement_filename"/>
+                                </group>
+                                <group string="Publication">
+                                    <field name="is_published"/>
+                                    <field name="views" readonly="1"/>
+                                    <field name="last_viewed" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        <!-- Page 2: Location -->
+                        <page string="Location">
+                            <group>
+                                <field name="country_id"/>
+                                <field name="state_id"/>
+                                <field name="city" required="1"/>
+                                <field name="zip_code"/>
+                                <field name="street"/>
+                            </group>
+                            <group string="Geolocation" colspan="2">
+                                <field name="latitude" readonly="1"/>
+                                <field name="longitude" readonly="1"/>
+                                <field name="date_localization" readonly="1"/>
+                            </group>
+                            <group string="Landmarks">
+                                <field name="nearby_landmarks" widget="text"/>
+                            </group>
+                        </page>
+                        <!-- Page 3: Financials & Infrastructure -->
+                        <page string="Financials &amp; Infrastructure">
+                            <group string="Financials">
+                                <field name="emi_available"/>
+                                <field name="registration_charges"/>
+                                <field name="registration_amount" readonly="1"/>
+                            </group>
+                            <group string="Infrastructure">
+                                <field name="water_connection"/>
+                                <field name="electricity_connection"/>
+                                <field name="drainage_facility"/>
+                                <field name="gated_community"/>
+                            </group>
+                        </page>
+                        <!-- Page 4: Contact & Media -->
+                        <page string="Contact &amp; Media">
+                            <group string="Contact">
+                                <field name="contact_name"/>
+                                <field name="contact_phone"/>
+                                <field name="contact_email"/>
+                            </group>
+                            <group string="Media">
+                                <field name="property_website_url"/>
+                                <field name="gallery_image_ids" widget="many2many_binary"/>
+                                <field name="image_count" readonly="1"/>
+                            </group>
+                        </page>
+                        <!-- Page 5: AI Insights -->
+                        <page string="AI Insights">
+                            <group>
+                                <button name="action_regenerate_ai_content" type="object"
+                                        string="Regenerate AI Content" icon="fa-refresh"
+                                        class="btn btn-primary"/>
+
+                                <field name="ai_key_highlights" readonly="1"/>
+                                <field name="ai_investment_data" readonly="1"/>
+                                <field name="ai_nearby_places" readonly="1"/>
+                                <field name="ai_unique_features" readonly="1"/>
+                                <field name="ai_lifestyle_benefits" readonly="1"/>
+                                <field name="ai_content_generated" readonly="1"/>
+                                <field name="ai_generation_date" readonly="1"/>
+                            </group>
+
+                        </page>
+                        <!-- Page 6: SEO Details -->
+                        <page string="SEO Details">
+                            <group>
+                                <field name="seo_title"/>
+                                <field name="seo_description" widget="text"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="real_estate_management.action_property_management" model="ir.actions.act_window">
+        <field name="name">Property Listings</field>
+        <field name="res_model">property.property</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p>Manage publicity properties in Vishakapatnam here.</p>
+        </field>
+    </record>
+
+</odoo>
