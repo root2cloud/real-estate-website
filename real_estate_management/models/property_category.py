@@ -12,5 +12,6 @@ class PropertyCategory(models.Model):
     image = fields.Binary('Image')
     seo_title = fields.Char('SEO Title*',required=True)
     seo_description = fields.Text('SEO Description')
+    color = fields.Integer(string='Color', default=0)
 
     property_ids = fields.One2many('property.property', 'category_id', string='Properties')

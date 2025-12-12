@@ -2,3 +2,8 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_property_property,access_property_property,model_property_property,,1,1,1,1
 access_property_category,access_property_category,model_property_category,,1,1,1,1
 access_property_registration_user,property.registration user,model_property_registration,base.group_user,1,1,1,1
+access_real_estate_agent_public,real.estate.agent.public,model_real_estate_agent,base.group_public,1,0,0,0
+access_real_estate_agent_user,real.estate.agent.user,model_real_estate_agent,base.group_user,1,1,1,1
+access_agent_registration_public,agent.registration.public,model_agent_registration,base.group_public,1,0,1,0
+access_agent_registration_user,agent.registration.user,model_agent_registration,base.group_user,1,1,1,1
+access_agent_registration_reject_wizard,agent.registration.reject.wizard,model_agent_registration_reject_wizard,base.group_user,1,1,1,1

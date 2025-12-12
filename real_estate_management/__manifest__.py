@@ -12,24 +12,35 @@
 
         # data
         'data/mail_property_rejection.xml',
+        'data/sequences.xml',
+        'data/agent_registration_demo.xml',
 
         # Views
         'views/property_views.xml',
         'views/property_category_views.xml',
         'views/menu.xml',
         'views/property_registration_views.xml',
+        'views/agent_views.xml',
+        'views/agent_registration_views.xml',
 
         # Qweb Templates
         'views/qweb_templates/property_map_template.xml',
         'views/qweb_templates/property_detail_page.xml',
         'views/qweb_templates/properties_menu_page.xml',
         'views/qweb_templates/website_registration_template.xml',
+        'views/qweb_templates/agent_directory_template.xml',
+        'views/qweb_templates/agent_detail_template.xml',
+        'views/qweb_templates/agent_registration_form_template.xml',
+
+        #wizards
+        'wizard/agent_registration_reject_wizard_views.xml',
 
     ],
     'assets': {
         'web.assets_frontend': [
             'real_estate_management/static/src/js/property_map.js',
             # 'real_estate_management/static/src/css/property_map.css',
+            'real_estate_management/static/src/css/agent_registration.css',
         ],
     },
     'installable': True,

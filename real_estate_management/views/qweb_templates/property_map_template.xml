@@ -22,11 +22,11 @@
                          ========================= -->
                     <section id="top-bar" class="row">
                         <!-- CENTER MAIN HEADING -->
-<!--                        <div class="col-12 text-center">-->
-<!--                            <h1 class="main-heading">-->
-<!--                                Explore Our Exclusive Property Showcase-->
-<!--                            </h1>-->
-<!--                        </div>-->
+                        <!--                        <div class="col-12 text-center">-->
+                        <!--                            <h1 class="main-heading">-->
+                        <!--                                Explore Our Exclusive Property Showcase-->
+                        <!--                            </h1>-->
+                        <!--                        </div>-->
 
                         <!-- LEFT / RIGHT LINE -->
                         <div class="col-12 d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between top-bar-inner">
@@ -211,7 +211,8 @@
                                         <div class="info-box info-box-green">
                                             <h5 class="fw-bold text-success mb-2">💼 Investment Reasons</h5>
                                             <p class="text-dark" style="font-size:15px; line-height:1.6;">
-                                                <t t-raw="(city_investment_info or {}).get('ai_investment_reasons', '')"/>
+                                                <t t-out="(city_investment_info or {}).get('ai_investment_reasons', '')"/>
+
                                             </p>
                                         </div>
                                     </div>
@@ -220,7 +221,9 @@
                                         <div class="info-box info-box-blue">
                                             <h5 class="fw-bold text-primary mb-2">🚀 Growth Potential</h5>
                                             <p class="text-dark" style="font-size:15px; line-height:1.6;">
-                                                <t t-raw="(city_investment_info or {}).get('ai_growth_potential', '')"/>
+
+                                                <t t-out="(city_investment_info or {}).get('ai_growth_potential', '')"/>
+
                                             </p>
                                         </div>
                                     </div>
@@ -229,7 +232,8 @@
                                         <div class="info-box info-box-yellow">
                                             <h5 class="fw-bold text-warning mb-2">🏗️ Infrastructure</h5>
                                             <p class="text-dark" style="font-size:15px; line-height:1.6;">
-                                                <t t-raw="(city_investment_info or {}).get('ai_infrastructure', '')"/>
+
+                                                <t t-out="(city_investment_info or {}).get('ai_infrastructure', '')"/>
                                             </p>
                                         </div>
                                     </div>
@@ -238,7 +242,7 @@
                                         <div class="info-box info-box-red">
                                             <h5 class="fw-bold text-danger mb-2">📊 Market Trends</h5>
                                             <p class="text-dark" style="font-size:15px; line-height:1.6;">
-                                                <t t-raw="(city_investment_info or {}).get('ai_market_trends', '')"/>
+                                                <t t-out="(city_investment_info or {}).get('ai_market_trends', '')"/>
                                             </p>
                                         </div>
                                     </div>

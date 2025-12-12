@@ -1,6 +1,7 @@
 /* =====================================================
    ULTRA PREMIUM PROPERTY DETAIL PAGE - REDFIN INSPIRED
    Clean, Modern, Professional Real Estate Design
+   Complete CSS File - Final Version
 ===================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Source+Serif+Pro:wght@600;700&display=swap');
@@ -282,7 +283,7 @@ body {
    PROPERTY INFO SECTION
 ===================================================== */
 .property-info-section {
-  padding: 32px 0 48px;
+  padding: 28px 0 48px;
 }
 
 .info-layout {
@@ -305,7 +306,7 @@ body {
    PROPERTY HEADER
 ===================================================== */
 .property-header-block {
-  padding-bottom: 32px;
+  padding-bottom: 28px;
   border-bottom: 1px solid var(--border);
   margin-bottom: 32px;
 }
@@ -464,7 +465,7 @@ body {
    CONTENT SECTIONS
 ===================================================== */
 .content-section {
-  padding: 32px 0;
+  padding: 28px 0;
   border-bottom: 1px solid var(--border);
 }
 
@@ -473,7 +474,7 @@ body {
   font-size: 22px;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 .section-content {
@@ -495,6 +496,33 @@ body {
 
 .rich-content li {
   margin-bottom: 8px;
+}
+
+.text-muted {
+  color: var(--text-light);
+  font-style: italic;
+}
+
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.feature-list li {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.feature-list li:last-child {
+  border-bottom: none;
+}
+
+.feature-list li strong {
+  color: var(--primary);
+  font-weight: 600;
 }
 
 /* AMENITIES GRID */

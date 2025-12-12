@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="agent_registration_form_template" name="Agent Registration Form">
+        <t t-call="website.layout">
+            <t t-set="head">
+                <link rel="stylesheet" href="/real_estate_management/static/src/css/agent_registration.css"/>
+            </t>
+
+            <div id="wrap" class="agent-registration-wrap">
+                <section class="registration-hero">
+                    <div class="container">
+                        <h1 class="hero-title">Join Our Elite Agent Network</h1>
+                        <p class="hero-subtitle">Start your journey with India's leading real estate platform</p>
+                    </div>
+                </section>
+
+                <section class="registration-form-section">
+                    <div class="container">
+                        <form action="/agent/register/submit" method="POST" enctype="multipart/form-data" class="agent-registration-form">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                            <!-- Personal Information -->
+                            <div class="form-section">
+                                <h2 class="section-title">
+                                    <i class="fas fa-user"></i>
+                                    Personal Information
+                                </h2>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Full Name *</label>
+                                            <input type="text" name="agent_name" class="form-control" required="required" placeholder="Enter your full name"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Email Address *</label>
+                                            <input type="email" name="email" class="form-control" required="required" placeholder="your.email@example.com"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Phone Number *</label>
+                                            <input type="tel" name="phone" class="form-control" required="required" placeholder="+91 98765 43210"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>WhatsApp Number</label>
+                                            <input type="tel" name="whatsapp" class="form-control" placeholder="+91 98765 43210"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Professional Details -->
+                            <div class="form-section">
+                                <h2 class="section-title">
+                                    <i class="fas fa-briefcase"></i>
+                                    Professional Details
+                                </h2>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Desired Designation *</label>
+                                            <select name="designation" class="form-control" required="required">
+                                                <option value="">Select Designation</option>
+                                                <option value="agent">Agent</option>
+                                                <option value="senior_agent">Senior Agent</option>
+                                                <option value="principal_agent">Principal Agent</option>
+                                                <option value="broker">Broker</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Expertise Level *</label>
+                                            <select name="expertise_level" class="form-control" required="required">
+                                                <option value="">Select Level</option>
+                                                <option value="standard">Standard Agent</option>
+                                                <option value="luxury">Luxury Expert</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Real Estate License Number</label>
+                                            <input type="text" name="license_number" class="form-control" placeholder="License number (if applicable)"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Years of Experience *</label>
+                                            <input type="number" name="experience_years" class="form-control" required="required" min="0" max="50" placeholder="0"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Location -->
+                            <div class="form-section">
+                                <h2 class="section-title">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Location Details
+                                </h2>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>City *</label>
+                                            <input type="text" name="city" class="form-control" required="required" placeholder="City"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>State *</label>
+                                            <select name="state_id" class="form-control" required="required">
+                                                <option value="">Select State</option>
+                                                <t t-foreach="states" t-as="state">
+                                                    <option t-att-value="state.id" t-esc="state.name"/>
+                                                </t>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>ZIP Code</label>
+                                            <input type="text" name="zip_code" class="form-control" placeholder="500001"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Specializations -->
+                            <div class="form-section">
+                                <h2 class="section-title">
+                                    <i class="fas fa-star"></i>
+                                    Property Specializations
+                                </h2>
+                                <div class="specialization-grid">
+                                    <t t-foreach="categories" t-as="category">
+                                        <label class="checkbox-card">
+                                            <input type="checkbox" name="specialization_ids" t-att-value="category.id"/>
+                                            <span class="checkbox-label">
+                                                <i class="fas fa-check"></i>
+                                                <t t-esc="category.name"/>
+                                            </span>
+                                        </label>
+                                    </t>
+                                </div>
+                            </div>
+
+                            <!-- Biography -->
+                            <div class="form-section">
+                                <h2 class="section-title">
+                                    <i class="fas fa-file-alt"></i>
+                                    About You
+                                </h2>
+                                <div class="form-group">
+                                    <label>Short Bio (100-200 words) *</label>
+                                    <textarea name="short_bio" class="form-control" rows="4" required="required"
+                                              placeholder="Write a brief introduction about yourself and your real estate experience..."></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Qualifications &amp; Certifications</label>
+                                    <textarea name="qualifications" class="form-control" rows="3"
+                                              placeholder="List your degrees, certifications, and professional achievements..."></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Languages Spoken</label>
+                                    <input type="text" name="languages_spoken" class="form-control"
+                                           value="English, Hindi" placeholder="English, Hindi, Telugu, etc."/>
+                                </div>
+                            </div>
+
+                            <!-- Documents -->
+                            <div class="form-section">
+                                <h2 class="section-title">
+                                    <i class="fas fa-upload"></i>
+                                    Upload Documents
+                                </h2>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Profile Photo *</label>
+                                            <input type="file" name="profile_image" class="form-control-file"
+                                                   required="required" accept="image/*"/>
+                                            <small class="form-text">Professional photo (max 5MB)</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>ID Proof (Aadhaar/PAN) *</label>
+                                            <input type="file" name="id_proof" class="form-control-file"
+                                                   required="required" accept="image/*,application/pdf"/>
+                                            <small class="form-text">Aadhaar or PAN card</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>License Document</label>
+                                            <input type="file" name="license_document" class="form-control-file"
+                                                   accept="image/*,application/pdf"/>
+                                            <small class="form-text">Real estate license (if available)</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Resume/CV</label>
+                                            <input type="file" name="resume" class="form-control-file"
+                                                   accept="application/pdf,.doc,.docx"/>
+                                            <small class="form-text">Your professional resume</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Portfolio Images (Optional)</label>
+                                    <input type="file" name="portfolio_images" class="form-control-file"
+                                           multiple="multiple" accept="image/*"/>
+                                    <small class="form-text">Upload images of properties you've sold (multiple allowed)</small>
+                                </div>
+                            </div>
+
+                            <!-- Social Media -->
+                            <div class="form-section">
+                                <h2 class="section-title">
+                                    <i class="fas fa-share-alt"></i>
+                                    Social Media (Optional)
+                                </h2>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>LinkedIn Profile</label>
+                                            <input type="url" name="linkedin_url" class="form-control"
+                                                   placeholder="https://linkedin.com/in/yourprofile"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Facebook Profile</label>
+                                            <input type="url" name="facebook_url" class="form-control"
+                                                   placeholder="https://facebook.com/yourprofile"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Terms & Submit -->
+                            <div class="form-section">
+                                <div class="form-group">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" required="required"/>
+                                        <span>I agree to the <a href="/page/terms" target="_blank">Terms &amp; Conditions</a>
+                                              and <a href="/page/privacy" target="_blank">Privacy Policy</a></span>
+                                    </label>
+                                </div>
+
+                                <div class="text-center mt-4">
+                                    <button type="submit" class="btn-submit">
+                                        <i class="fas fa-paper-plane"></i>
+                                        Submit Registration
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
+    <!-- Success Template -->
+    <template id="agent_registration_success_template" name="Registration Success">
+        <t t-call="website.layout">
+            <div class="container text-center py-5">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h1 class="mb-3">Registration Submitted Successfully!</h1>
+                <p class="lead">Thank you, <strong t-esc="registration.agent_name"/>!</p>
+                <p>Your agent registration (<strong t-esc="registration.name"/>) has been submitted successfully.</p>
+                <p>Our team will review your application and get back to you within 2-3 business days.</p>
+                <p class="text-muted mt-4">You will receive an email at <strong t-esc="registration.email"/> with further updates.</p>
+                <a href="/" class="btn btn-primary mt-4">Back to Home</a>
+            </div>
+        </t>
+    </template>
+
+    <!-- Error Template -->
+    <template id="agent_registration_error_template" name="Registration Error">
+        <t t-call="website.layout">
+            <div class="container text-center py-5">
+                <div class="error-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h1 class="mb-3">Registration Failed</h1>
+                <p class="text-danger" t-esc="error"/>
+                <a href="/agent/register" class="btn btn-primary mt-4">Try Again</a>
+            </div>
+        </t>
+    </template>
+</odoo>

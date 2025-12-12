@@ -1,20 +1,17 @@
 <odoo>
     <template id="property_registration_form" name="Property Registration Form - Premium Edition">
         <t t-call="website.layout">
-            <main class="container-fluid luxury-bg py-5">
+            <main class="container-fluid luxury-bg">
 
-                <!-- HEADER -->
-                <section class="text-center text-white py-5"
-                         style="background: linear-gradient(100deg,#5b21b6 0%, #4f46e5 40%, #14b8a6 100%);
-                                border-bottom-left-radius:3rem;border-bottom-right-radius:3rem;">
-                    <h2 class="mb-1 fw-bold display-5 tracking-wider">✨ Premium Property Registration</h2>
-                    <p class="mb-0 fs-5 text-light opacity-90 fw-500">
-                        Showcase your property with style and confidence.
-                    </p>
+                 <!-- HERO BANNER -->
+                <section class="premium-hero">
+                    <h2>✨ Premium Property Registration</h2>
+                    <p>Showcase your property with style and confidence.</p>
                 </section>
 
+
                 <!-- FORM SECTION -->
-                <section class="container my-5">
+                <section class="container my-4">
                     <div class="card property-form-card border-0 mx-auto shadow-xxl bg-glass"
                          style="max-width:1220px;min-height:760px;">
                         <div class="card-body p-5">
@@ -113,7 +110,8 @@
                                             <span class="text-muted">(First is cover)</span>
                                         </label>
                                         <input type="file" name="images" id="images" accept="image/*"
-                                               multiple="multiple" class="form-control modern-input" required="required"/>
+                                               multiple="multiple" class="form-control modern-input"
+                                               required="required"/>
                                         <small class="text-muted d-block mt-1">
                                             Upload multiple for best gallery. First will be the main image.
                                         </small>
@@ -169,6 +167,28 @@
                 background: linear-gradient(145deg, #d6e0ff 0%, #e0f7fa 45%, #f3e8ff 100%);
                 min-height: 100vh;
                 }
+                .premium-hero {
+                text-align: center;
+                color: white;
+                padding: 3rem 1rem;
+                background: linear-gradient(100deg, #5b21b6 0%, #4f46e5 40%, #14b8a6 100%);
+                border-bottom-left-radius: 0rem;
+                border-bottom-right-radius: 0rem;
+                margin-top:0px;
+                }
+
+                .premium-hero h2 {
+                margin-bottom: 0.5rem;
+                font-weight: bold;
+                letter-spacing: 1px;
+                }
+
+                .premium-hero p {
+                font-size: 1.25rem;
+                opacity: 0.9;
+                font-weight: 500;
+                }
+
                 .property-form-card {
                 background: rgba(255,255,255, 0.6);
                 backdrop-filter: blur(10px) saturate(130%);

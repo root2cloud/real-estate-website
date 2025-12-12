@@ -166,8 +166,15 @@
                                     <div class="content-section">
                                         <h3 class="section-heading">Property Overview</h3>
                                         <div class="section-content">
-                                            <div t-field="property.ai_key_highlights" class="rich-content"></div>
-                                            <div t-field="property.short_description" class="description-text"></div>
+                                            <t t-if="property.ai_key_highlights">
+                                                <div t-field="property.ai_key_highlights" class="rich-content"></div>
+                                            </t>
+                                            <t t-if="property.short_description">
+                                                <div t-field="property.short_description" class="description-text"></div>
+                                            </t>
+                                            <t t-if="not property.ai_key_highlights and not property.short_description">
+                                                <p class="text-muted">This is a premium property offering excellent value and location advantages. Contact us for detailed information about this property.</p>
+                                            </t>
                                         </div>
                                     </div>
 
@@ -206,7 +213,13 @@
                                     <div class="content-section">
                                         <h3 class="section-heading">About This Property</h3>
                                         <div class="section-content">
-                                            <div t-field="property.detailed_description" class="rich-content"></div>
+                                            <t t-if="property.detailed_description">
+                                                <div t-field="property.detailed_description" class="rich-content"></div>
+                                            </t>
+                                            <t t-else="">
+                                                <p>This property is strategically located and offers great investment potential. The area is well-connected with excellent infrastructure and amenities nearby.</p>
+                                                <p>Key features include quality construction, proper documentation, and clear title. This makes it an ideal choice for both end-users and investors looking for long-term value appreciation.</p>
+                                            </t>
                                         </div>
                                     </div>
 
@@ -214,7 +227,19 @@
                                     <div class="content-section">
                                         <h3 class="section-heading">Why Choose This Property</h3>
                                         <div class="section-content">
-                                            <div t-field="property.ai_unique_features" class="rich-content"></div>
+                                            <t t-if="property.ai_unique_features">
+                                                <div t-field="property.ai_unique_features" class="rich-content"></div>
+                                            </t>
+                                            <t t-else="">
+                                                <ul class="feature-list">
+                                                    <li><strong>Prime Location:</strong> Situated in a rapidly developing area with excellent connectivity.</li>
+                                                    <li><strong>Clear Title:</strong> <span t-field="property.title_status"></span> - ensuring hassle-free ownership.</li>
+                                                    <li><strong>Great Infrastructure:</strong> Access to essential amenities and utilities.</li>
+                                                    <li><strong>Investment Potential:</strong> High appreciation potential in this growing locality.</li>
+                                                    <li><strong>Ready Documentation:</strong> All necessary papers and approvals in place.</li>
+                                                    <li><strong>Flexible Payment:</strong> <t t-if="property.emi_available">EMI options available for your convenience.</t><t t-else="">Multiple payment options available.</t></li>
+                                                </ul>
+                                            </t>
                                         </div>
                                     </div>
 
@@ -222,7 +247,12 @@
                                     <div class="content-section">
                                         <h3 class="section-heading">Location &amp; Nearby</h3>
                                         <div class="section-content">
-                                            <div t-field="property.ai_nearby_places" class="rich-content"></div>
+                                            <t t-if="property.ai_nearby_places">
+                                                <div t-field="property.ai_nearby_places" class="rich-content"></div>
+                                            </t>
+                                            <t t-else="">
+                                                <p>This property enjoys an excellent location with easy access to key areas and facilities.</p>
+                                            </t>
                                             <t t-if="property.nearby_landmarks">
                                                 <div class="landmark-box">
                                                     <i class="fas fa-landmark"></i>
@@ -261,7 +291,9 @@
                                             </t>
                                         </div>
                                         <div class="section-content mt-3">
-                                            <div t-field="property.ai_investment_data" class="rich-content"></div>
+                                            <t t-if="property.ai_investment_data">
+                                                <div t-field="property.ai_investment_data" class="rich-content"></div>
+                                            </t>
                                         </div>
                                     </div>
 

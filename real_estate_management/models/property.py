@@ -196,209 +196,265 @@ class Property(models.Model):
                 _logger.error(f"Geocode error for {rec.name}: {e}")
 
     def generate_ai_content(self):
+        """Generate AI content using FREE Groq API"""
         self.ensure_one()
-        api_key = self.env['ir.config_parameter'].sudo().get_param('openai.api_key')
-        if not api_key:
-            _logger.error("OpenAI API key not configured")
-            return
 
-        _logger.info(f"Generating AI content for property: {self.name}")
+        # Get Groq API key (FREE from https://console.groq.com)
+        api_key = self.env['ir.config_parameter'].sudo().get_param('groq.api_key')
+
+        if not api_key:
+            _logger.error("❌ Groq API key not configured. Get free key from https://console.groq.com")
+            return False
+
+        _logger.info(f"🔄 Generating AI content for property: {self.name}")
 
         prompt = (
-            f"Generate factual real estate data for '{self.name}' located at {self.street}, {self.city}, {self.state_id.name or ''}, {self.zip_code}. "
-            f"Price: ₹{self.price:,}, Area: {self.plot_area} sqft, Category: {self.category_id.name or 'Plot'}. "
-            "Return a JSON object with the following keys (each value a bullet-point list, max 80 words): "
-            "'key_highlights' (3 main property features with exact data), "
-            "'investment_data' (3 exact financial benefits with numbers or percentages), "
-            "'nearby_places' (actual distances to 4 key nearby locations), "
-            "'unique_features' (3 standout factual features that make this property unique), "
-            "'lifestyle_benefits' (3 precise lifestyle benefits with real distances or details). "
-            "Focus solely on actual data sourced from property records, measurements, and verified local info. Do not include generic marketing text or assumptions."
+            f"Generate real estate data for '{self.name}' in {self.city}.\n"
+            f"Price: ₹{self.price:,.0f}, Area: {self.plot_area} sqft\n\n"
+            f"Return JSON with these keys (each as array of 3-4 points):\n"
+            f"- key_highlights\n"
+            f"- investment_data\n"
+            f"- nearby_places\n"
+            f"- unique_features\n"
+            f"- lifestyle_benefits\n"
+            f"Return ONLY valid JSON."
         )
 
-        headers = {'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'}
+        headers = {
+            'Authorization': f'Bearer {api_key}',
+            'Content-Type': 'application/json'
+        }
+
         payload = {
-            'model': 'gpt-4o-mini',
+            'model': 'llama-3.3-70b-versatile',  # FREE Groq model
             'messages': [
-                {'role': 'system',
-                 'content': '"You are a real estate data analyst. Provide only factual data sourced from property records,""measurements, and verified local information. Do not include any generic marketing language or assumptions."'},
+                {'role': 'system', 'content': 'You are a real estate analyst. Return only JSON.'},
                 {'role': 'user', 'content': prompt}
             ],
-            'max_tokens': 400,
+            'max_tokens': 800,
             'temperature': 0.3
         }
 
         try:
-            res = requests.post(
-                'https://api.openai.com/v1/chat/completions',
+            _logger.info("📤 Calling FREE Groq API...")
+
+            response = requests.post(
+                'https://api.groq.com/openai/v1/chat/completions',  # Groq endpoint
                 headers=headers,
                 json=payload,
                 timeout=30
             )
-            res.raise_for_status()
-            response_data = res.json()
-            response_text = response_data['choices'][0]['message']['content']
-            print(response_text)
-            if response_text.startswith("```json"):
-                response_text = response_text.replace("```json", "").replace("```", "")
+
+            _logger.info(f"📥 Response status: {response.status_code}")
+
+            if response.status_code != 200:
+                _logger.error(f"API Error: {response.text}")
+                return False
+
+            response_data = response.json()
+            response_text = response_data['choices'][0]['message']['content'].strip()
+
+            # Clean JSON
+            if response_text.startswith('```'):
+                lines = response_text.split('\n')
+                response_text = '\n'.join(lines[1:-1]) if len(lines) > 2 else response_text
+                response_text = response_text.replace('```json', '').replace('```', '').strip()
 
             try:
-                js = json.loads(response_text)
-                print(js)
+                ai_data = json.loads(response_text)
+                _logger.info(f"✅ Parsed AI data with keys: {list(ai_data.keys())}")
+            except json.JSONDecodeError as e:
+                _logger.error(f"JSON parse error: {e}\nResponse: {response_text}")
+                return False
 
-                # Convert lists to HTML <ul> format
-                def list_to_html(lst):
-                    if not isinstance(lst, list) or not lst:
-                        return str(lst) if lst else ''
-                    return '<ul>' + ''.join(f'<li>{item}</li>' for item in lst) + '</ul>'
-
-            except Exception as e:
-                print(f"JSON parse error: {e}")
-                js = {'key_highlights': response_text}
+            # Convert to HTML
+            def to_html(data):
+                if not data:
+                    return '<ul><li>Information not available</li></ul>'
+                if isinstance(data, list):
+                    items = ''.join([f'<li>{item}</li>' for item in data])
+                    return f'<ul>{items}</ul>'
+                return f'<ul><li>{data}</li></ul>'
 
             self.write({
-                'ai_key_highlights': list_to_html(js.get('key_highlights', '')),
-                'ai_investment_data': list_to_html(js.get('investment_data', '')),
-                'ai_nearby_places': list_to_html(js.get('nearby_places', '')),
-                'ai_unique_features': list_to_html(js.get('unique_features', '')),
+                'ai_key_highlights': to_html(ai_data.get('key_highlights', [])),
+                'ai_investment_data': to_html(ai_data.get('investment_data', [])),
+                'ai_nearby_places': to_html(ai_data.get('nearby_places', [])),
+                'ai_unique_features': to_html(ai_data.get('unique_features', [])),
+                'ai_lifestyle_benefits': to_html(ai_data.get('lifestyle_benefits', [])),
                 'ai_content_generated': True,
                 'ai_generation_date': fields.Datetime.now(),
             })
-            print(f"AI content generated for {self.name}")
+
+            _logger.info(f"✅ AI content saved for property: {self.name}")
+            return True
 
         except Exception as e:
-            print(f"AI generation failed for {self.name}: {e}")
-
-    def action_regenerate_ai_content(self):
-        for rec in self:
-            rec.generate_ai_content()
+            _logger.error(f"❌ Error: {e}")
+            return False
 
     @api.model
     def get_city_investment_info(self, city_name):
-        """
-        Get or generate AI investment information for a city
-        """
+        """Generate city investment info using FREE Groq API"""
         if not city_name:
             return None
 
-        # Search if we already have this city's investment data in any property
-        existing = self.search([
+        # Check cache
+        cached = self.search([
             ('last_city_processed', '=', city_name),
             ('city_investment_generated', '=', True)
         ], limit=1)
 
-        if existing:
+        if cached:
+            _logger.info(f"✅ Found cached city data for {city_name}")
             return {
                 'city': city_name,
-                'ai_investment_reasons': existing.city_investment_reasons,
-                'ai_growth_potential': existing.city_growth_potential,
-                'ai_infrastructure': existing.city_infrastructure,
-                'ai_market_trends': existing.city_market_trends,
+                'ai_investment_reasons': cached.city_investment_reasons or '',
+                'ai_growth_potential': cached.city_growth_potential or '',
+                'ai_infrastructure': cached.city_infrastructure or '',
+                'ai_market_trends': cached.city_market_trends or '',
                 'ai_content_generated': True,
             }
 
-        # Get API key
-        api_key = self.env['ir.config_parameter'].sudo().get_param('openai.api_key')
-        if not api_key:
-            _logger.error("OpenAI API key not configured")
-            return None
+        # Get Groq API key
+        api_key = self.env['ir.config_parameter'].sudo().get_param('groq.api_key')
 
-        print(f"Generating AI investment content for city: {city_name}")
+        if not api_key:
+            _logger.error("❌ Groq API key not configured")
+            return {
+                'city': city_name,
+                'ai_investment_reasons': '<p>Please configure Groq API key to see investment data.</p>',
+                'ai_growth_potential': '<p>Get free API key from https://console.groq.com</p>',
+                'ai_infrastructure': '<p>Configuration needed.</p>',
+                'ai_market_trends': '<p>Configuration needed.</p>',
+                'ai_content_generated': False,
+            }
+
+        _logger.info(f"📝 Generating city investment data for: {city_name}")
 
         prompt = (
-            f"Create a concise, premium, and trustworthy real estate investment summary for {city_name}, India. "
-            "Return a JSON object with exactly four keys, each containing a short paragraph (2–3 sentences max): "
-            "'investment_reasons' — Explain why this city is a reliable and smart choice for real estate investment. Focus on safety, job growth, lifestyle, and investor confidence. "
-            "'growth_potential' — Highlight upcoming developments, government initiatives, and economic growth that boost long-term value. "
-            "'infrastructure' — Summarize key transport links, urban projects, and quality-of-life improvements. "
-            "'market_trends' — Describe current property and rental trends that indicate steady demand and appreciation. "
-            "Use warm, confident language that builds trust with first-time investors — make it sound like expert advice backed by real urban and economic growth data. "
-            "Avoid lists — write naturally in full sentences with a realistic tone suitable for a luxury real estate website."
+            f"Create real estate investment summary for {city_name}, India.\n\n"
+            f"Return JSON with these keys (each as array of 2-3 bullet points):\n"
+            f"- investment_reasons: Why invest here\n"
+            f"- growth_potential: Future developments\n"
+            f"- infrastructure: Transport & amenities\n"
+            f"- market_trends: Current property trends\n\n"
+            f"Return ONLY valid JSON."
         )
 
+        headers = {
+            'Authorization': f'Bearer {api_key}',
+            'Content-Type': 'application/json'
+        }
 
-
-        headers = {'Authorization': f'Bearer {api_key}', 'Content-Type': 'application/json'}
         payload = {
-            'model': 'gpt-4o-mini',
+            'model': 'llama-3.3-70b-versatile',
             'messages': [
-                {'role': 'system',
-                 'content': 'You are a real estate investment analyst. Provide factual data about cities in India with focus on real estate investment potential.'},
+                {'role': 'system', 'content': 'You are a real estate analyst. Return only JSON.'},
                 {'role': 'user', 'content': prompt}
             ],
-            'max_tokens': 600,
+            'max_tokens': 800,
             'temperature': 0.3
         }
 
         try:
-            res = requests.post(
-                'https://api.openai.com/v1/chat/completions',
+            _logger.info("📤 Calling Groq API for city data...")
+
+            response = requests.post(
+                'https://api.groq.com/openai/v1/chat/completions',
                 headers=headers,
                 json=payload,
                 timeout=30
             )
-            res.raise_for_status()
-            response_data = res.json()
-            response_text = response_data['choices'][0]['message']['content']
 
-            if response_text.startswith:
-                response_text = response_text.replace("```json", "").replace("```", "")
-
-            try:
-                js = json.loads(response_text)
-
-                def list_to_html(lst):
-                    if not isinstance(lst, list) or not lst:
-                        return str(lst) if lst else ''
-                    return '<ul>' + ''.join(f'<li>{item}</li>' for item in lst) + '</ul>'
-
-                investment_reasons = list_to_html(js.get('investment_reasons', ''))
-                growth_potential = list_to_html(js.get('growth_potential', ''))
-                infrastructure = list_to_html(js.get('infrastructure', ''))
-                market_trends = list_to_html(js.get('market_trends', ''))
-
-                # Store in a dummy property record to cache the data
-                city_cache = self.search([('last_city_processed', '=', city_name)], limit=1)
-                if not city_cache:
-                    # Create a dummy record just to store city data
-                    city_cache = self.create({
-                        'name': f'City Data - {city_name}',
-                        'city': city_name,
-                        'city_investment_reasons': investment_reasons,
-                        'city_growth_potential': growth_potential,
-                        'city_infrastructure': infrastructure,
-                        'city_market_trends': market_trends,
-                        'city_investment_generated': True,
-                        'city_investment_date': fields.Datetime.now(),
-                        'last_city_processed': city_name,
-                        'is_published': False,
-                    })
-                else:
-                    city_cache.write({
-                        'city_investment_reasons': investment_reasons,
-                        'city_growth_potential': growth_potential,
-                        'city_infrastructure': infrastructure,
-                        'city_market_trends': market_trends,
-                        'city_investment_generated': True,
-                        'city_investment_date': fields.Datetime.now(),
-                        'last_city_processed': city_name,
-                    })
-
-                print(f"AI city investment content generated and stored for {city_name}")
-
-                return {
-                    'city': city_name,
-                    'ai_investment_reasons': investment_reasons,
-                    'ai_growth_potential': growth_potential,
-                    'ai_infrastructure': infrastructure,
-                    'ai_market_trends': market_trends,
-                    'ai_content_generated': True,
-                }
-
-            except Exception as e:
-                print(f"JSON parse error for city: {e}")
+            if response.status_code != 200:
+                _logger.error(f"API Error: {response.text}")
                 return None
 
+            response_data = response.json()
+            response_text = response_data['choices'][0]['message']['content'].strip()
+
+            # Clean JSON
+            if response_text.startswith('```'):
+                lines = response_text.split('\n')
+                response_text = '\n'.join(lines[1:-1]) if len(lines) > 2 else response_text
+                response_text = response_text.replace('```json', '').replace('```', '').strip()
+
+            try:
+                city_data = json.loads(response_text)
+                _logger.info(f"✅ Parsed city data with keys: {list(city_data.keys())}")
+            except json.JSONDecodeError as e:
+                _logger.error(f"JSON parse error: {e}")
+                return None
+
+            # Convert to HTML
+            def to_html(data):
+                if not data:
+                    return '<p>Information not available.</p>'
+                if isinstance(data, list):
+                    items = ''.join([f'<li>{item}</li>' for item in data])
+                    return f'<ul>{items}</ul>'
+                if isinstance(data, str):
+                    return f'<p>{data}</p>'
+                return '<p>Information not available.</p>'
+
+            investment_reasons = to_html(city_data.get('investment_reasons', ''))
+            growth_potential = to_html(city_data.get('growth_potential', ''))
+            infrastructure = to_html(city_data.get('infrastructure', ''))
+            market_trends = to_html(city_data.get('market_trends', ''))
+
+            # Cache the data
+            city_property = self.search([
+                ('city', '=', city_name),
+                ('is_published', '=', True)
+            ], limit=1)
+
+            if city_property:
+                city_property.write({
+                    'city_investment_reasons': investment_reasons,
+                    'city_growth_potential': growth_potential,
+                    'city_infrastructure': infrastructure,
+                    'city_market_trends': market_trends,
+                    'city_investment_generated': True,
+                    'city_investment_date': fields.Datetime.now(),
+                    'last_city_processed': city_name,
+                })
+                _logger.info(f"✅ Cached city data in property ID: {city_property.id}")
+
+            return {
+                'city': city_name,
+                'ai_investment_reasons': investment_reasons,
+                'ai_growth_potential': growth_potential,
+                'ai_infrastructure': infrastructure,
+                'ai_market_trends': market_trends,
+                'ai_content_generated': True,
+            }
+
         except Exception as e:
-            print(f"AI generation failed for city {city_name}: {e}")
+            _logger.error(f"❌ Error: {e}")
             return None
+
+    def action_regenerate_ai_content(self):
+        """Button to regenerate AI content"""
+        for rec in self:
+            success = rec.generate_ai_content()
+            if success:
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': 'Success',
+                        'message': 'AI content regenerated successfully!',
+                        'type': 'success',
+                    }
+                }
+            else:
+                return {
+                    'type': 'ir.actions.client',
+                    'tag': 'display_notification',
+                    'params': {
+                        'title': 'Error',
+                        'message': 'Failed to generate AI content. Check logs.',
+                        'type': 'danger',
+                    }
+                }
