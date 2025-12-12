@@ -105,6 +105,13 @@ class Property(models.Model):
     image_count = fields.Integer(string='Number of Images', compute='_compute_image_count')
     seo_title = fields.Char(string='SEO Title*',required=True)
     seo_description = fields.Text(string='SEO Description')
+    # Add this field to your Property model
+    agent_id = fields.Many2one(
+        'real.estate.agent',
+        string='Assigned Agent',
+        tracking=True,
+        help='Real estate agent responsible for this property'
+    )
 
     # Metadata
     is_published = fields.Boolean(string='Published', default=False)
